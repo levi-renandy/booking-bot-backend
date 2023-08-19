@@ -9,6 +9,7 @@ const request = async (req, res) => {
     await device.create({ id: id, allowed: false });
   } else if (isDeviceExists.allowed) {
     res.status(400).json({ message: "This device is already allowed!" });
+    return;
   }
   res.json({ message: "Success!" });
 };
@@ -22,6 +23,7 @@ const register = async (req, res) => {
     await device.create({ id, allowed: true });
   } else if (isDeviceExists.allowed) {
     res.status(400).json({ message: "This device is already allowed!" });
+    return;
   } else {
     await device.findByIdAndUpdate(isDeviceExists._id, { allowed: true });
   }

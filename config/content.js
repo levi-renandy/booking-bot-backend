@@ -1,39 +1,96 @@
 let isLoaded = true;
 let cursor;
 
-let slotEl = document.querySelector("table#displaySlot tbody tr a");
-let returnEl = document.querySelector("a.laquo.largetext.bold");
-if (
-  slotEl &&
-  document.querySelectorAll("#orderSideBar table tbody tr").length < 11
-) {
-  slotEl.addEventListener("click", () => {
-    chrome.runtime.sendMessage({ newSlotBooked: true });
-  });
+const baseURL = "https://booking-bot-backend-gk1q.onrender.com";
 
-  slotEl.click();
-} else if (returnEl) {
-  returnEl.click();
-}
+chrome.runtime.sendMessage({ getState: true }, async (res) => {
+  if (res) {
+    if (isAvailableTime()) {
+      let slotEl = document.querySelector("table#displaySlot tbody tr a");
+      let returnEl = document.querySelector("a.laquo.largetext.bold");
+      if (
+        slotEl &&
+        document.querySelectorAll("#orderSideBar table tbody tr").length < 11
+      ) {
+        let slotDetailEl = document.querySelector("table#displaySlot tbody tr");
+        let testType = slotDetailEl.querySelector("td:nth-child(1)").innerText;
+        let time = slotDetailEl.querySelector("td:nth-child(2)").innerText;
+        let price = slotDetailEl.querySelector("td:nth-child(3)").innerText;
+        let testsAvailable =
+          slotDetailEl.querySelector("td:nth-child(4)").innerText;
+        let lastDateToCancel =
+          slotDetailEl.querySelector("td:nth-child(5)").innerText;
 
-chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
-  if (request.searchAvailableDays) {
-    try {
-      let [, endDate] = getDateRange();
-      await sleep(200);
-      if (isOver2Months(endDate)) {
-        document
-          .getElementById("searchForWeeklySlotsPreviousAvailable")
-          .click();
-      } else {
-        document.getElementById("searchForWeeklySlotsNextAvailable").click();
+        await sendEmailNotification(`Hi, new slot was booked!`, {
+          testType,
+          time,
+          price,
+          testsAvailable,
+          lastDateToCancel,
+        });
+
+        slotEl.click();
+      } else if (returnEl) {
+        returnEl.click();
       }
-      sendResponse(true);
-    } catch (error) {
+    }
+  }
+});
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.searchAvailableDays) {
+    if (isAvailableTime()) {
+      try {
+        let [, endDate] = getDateRange();
+        if (isOver2Months(endDate)) {
+          document
+            .getElementById("searchForWeeklySlotsPreviousAvailable")
+            .click();
+        } else {
+          document.getElementById("searchForWeeklySlotsNextAvailable").click();
+        }
+        sendResponse(true);
+      } catch (error) {
+        sendResponse(false);
+      }
+    } else {
       sendResponse(false);
     }
   } else if (request.isLoaded) {
     sendResponse(cursor !== "wait" && isLoaded);
+  } else if (request.isSearchNeeded) {
+    if (document.querySelector("#browseslots")) {
+      let dayEls = document.getElementsByClassName("day slotsavailable");
+      if (dayEls.length) {
+        let [startDate, endDate] = getDateRange();
+
+        let { el } = Array.from(dayEls).reduce(
+          (prev, curr) => {
+            if (
+              isOver2Months(endDate) &&
+              isOver2Months(getDate(curr, startDate))
+            ) {
+              return prev;
+            }
+            let currSlots = getSlots(curr);
+            //   console.log(currSlots);
+            if (prev.slots < currSlots) {
+              return { slots: currSlots, el: curr };
+            } else return prev;
+          },
+          { el: null, slots: 0 }
+        );
+        if (!el) {
+          sendResponse(true);
+        } else {
+          sendResponse(false);
+        }
+      } else {
+        sendResponse(true);
+      }
+    } else {
+      sendResponse(false);
+    }
   }
 });
 
@@ -65,29 +122,31 @@ let detect = setInterval(() => {
         }
       }
 
-      let dayEls = document.getElementsByClassName("day slotsavailable");
-      if (dayEls.length) {
-        let [startDate, endDate] = getDateRange();
+      if (isAvailableTime()) {
+        let dayEls = document.getElementsByClassName("day slotsavailable");
+        if (dayEls.length) {
+          let [startDate, endDate] = getDateRange();
 
-        let { el } = Array.from(dayEls).reduce(
-          (prev, curr) => {
-            if (
-              isOver2Months(endDate) &&
-              isOver2Months(getDate(curr, startDate))
-            ) {
-              return prev;
-            }
-            let currSlots = getSlots(curr);
-            //   console.log(currSlots);
-            if (prev.slots < currSlots) {
-              return { slots: currSlots, el: curr };
-            } else return prev;
-          },
-          { el: null, slots: 0 }
-        );
-        if (el) {
-          el.querySelector("a").click();
-          clearInterval(detect);
+          let { el } = Array.from(dayEls).reduce(
+            (prev, curr) => {
+              if (
+                isOver2Months(endDate) &&
+                isOver2Months(getDate(curr, startDate))
+              ) {
+                return prev;
+              }
+              let currSlots = getSlots(curr);
+              //   console.log(currSlots);
+              if (prev.slots < currSlots) {
+                return { slots: currSlots, el: curr };
+              } else return prev;
+            },
+            { el: null, slots: 0 }
+          );
+          if (el) {
+            el.querySelector("a").click();
+            clearInterval(detect);
+          }
         }
       }
     }
@@ -129,4 +188,34 @@ const getDayNumber = (dayStr) => {
     Saturday: 5,
     Sunday: 6,
   }[dayStr];
+};
+
+const sendEmailNotification = async (text, data) => {
+  try {
+    const res = await axios.post(
+      `${baseURL}/email/sendEmail`,
+      {
+        text,
+        data,
+      },
+      {
+        headers: {
+          Accept: "application/json",
+          id: "123",
+        },
+      }
+    );
+    console.log(res.data);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const isAvailableTime = () => {
+  let now = new Date();
+
+  return (
+    now >= new Date(now.getFullYear(), now.getMonth(), now.getDate(), 6) &&
+    now < new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 51)
+  );
 };
