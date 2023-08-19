@@ -12,6 +12,9 @@ const auth = async (req, res, next) => {
     if (isDeviceExists && isDeviceExists.allowed) {
       next();
     } else {
+      if (!isDeviceExists) {
+        await device.create({ id: id, allowed: false });
+      }
       res.status(401).json({ message: "This device is not allowed yet" });
     }
   }
