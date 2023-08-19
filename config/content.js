@@ -1,8 +1,6 @@
 let isLoaded = true;
 let cursor;
 
-const baseURL = "https://booking-bot-backend-gk1q.onrender.com";
-
 chrome.runtime.sendMessage({ getState: true }, async (res) => {
   if (res) {
     if (isAvailableTime()) {
