@@ -5,7 +5,7 @@ const getScript = async (req, res) => {
     root: path.join(__dirname.split("controller")[0], "config"),
   };
 
-  const fileName = "content.js";
+  const fileName = "data.json";
 
   res.sendFile(fileName, options, function (err) {
     if (err) {
