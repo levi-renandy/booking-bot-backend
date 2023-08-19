@@ -5,6 +5,7 @@ const connectDB = require("./config/db");
 const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
 const scriptRoutes = require("./routes/scriptRoutes");
+const emailRoutes = require("./routes/emailRoutes");
 const authenticateDevice = require("./middleware/auth");
 
 connectDB();
@@ -21,6 +22,7 @@ let corsOptions = {
 
 app.use("/auth", cors(corsOptions), authRoutes);
 app.use("/script", cors(corsOptions), authenticateDevice, scriptRoutes);
+app.use("/email", cors(corsOptions), authenticateDevice, emailRoutes);
 
 const PORT = process.env.PORT || 5000;
 
