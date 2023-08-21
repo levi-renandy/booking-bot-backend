@@ -14,5 +14,6 @@
   "slotsAvailable": "day slotsavailable",
   "dialogs": "div[role='dialog']",
   "dialogCloseBtn": "button[title='Close']",
-  "dateRange": "#searchResults p.centre.bold"
+  "dateRange": "#searchResults p.centre.bold",
+  "gotoPreviousWeek": "searchForWeeklySlotsPreviousWeek"
 }
