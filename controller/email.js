@@ -19,11 +19,13 @@ const sendEmail = async (req, res) => {
     to: users.map((user) => user.email),
     subject: text,
     text: `
-    testType: ${data.testType}
-    time: ${data.time}
-    price: ${data.price}
-    testsAvailable: ${data.testsAvailable}
-    lastDateToCancel: ${data.lastDateToCancel}
+    Date: ${data.date}
+    Centre: ${data.centre}
+    Test type: ${data.testType}
+    Time: ${data.time}
+    Price: ${data.price}
+    Tests available: ${data.testsAvailable}
+    Last date to cancel: ${data.lastDateToCancel}
     `,
   };
 
