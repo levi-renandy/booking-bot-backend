@@ -18,7 +18,10 @@ const sendEmail = async (req, res) => {
     from: "funnylife7890@outlook.com",
     to: users.map((user) => user.email),
     subject: text,
-    text: `
+  };
+
+  if (data) {
+    mailOptions.text = `
     Date: ${data.date}
     Centre: ${data.centre}
     Test type: ${data.testType}
@@ -26,8 +29,8 @@ const sendEmail = async (req, res) => {
     Price: ${data.price}
     Tests available: ${data.testsAvailable}
     Last date to cancel: ${data.lastDateToCancel}
-    `,
-  };
+    `;
+  }
 
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
