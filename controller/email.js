@@ -9,7 +9,7 @@ const sendEmail = async (req, res) => {
   let transporter = nodemailer.createTransport({
     service: "outlook",
     auth: {
-      user: "funnylife7890@outlook.com",
+      user: "funnylife9012@outlook.com",
       pass: "master2033",
     },
   });
