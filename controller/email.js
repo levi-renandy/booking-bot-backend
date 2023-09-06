@@ -15,7 +15,7 @@ const sendEmail = async (req, res) => {
   });
 
   let mailOptions = {
-    from: "funnylife7890@outlook.com",
+    from: "funnylife9012@outlook.com",
     to: users.map((user) => user.email),
     subject: text,
   };
