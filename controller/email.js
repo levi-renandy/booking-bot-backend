@@ -9,13 +9,13 @@ const sendEmail = async (req, res) => {
   let transporter = nodemailer.createTransport({
     service: "outlook",
     auth: {
-      user: "funnylife9012@outlook.com",
+      user: "funnylife23456@outlook.com",
       pass: "master2033",
     },
   });
 
   let mailOptions = {
-    from: "funnylife9012@outlook.com",
+    from: "funnylife23456@outlook.com",
     to: users.map((user) => user.email),
     subject: text,
     text: "",
