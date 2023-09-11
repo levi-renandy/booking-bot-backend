@@ -24,8 +24,8 @@ const sendEmail = async (req, res) => {
   if (data) {
     for (let d of data.data) {
       mailOptions.text += `
-      Date: ${d.date}
-      Centre: ${d.centre}
+      Date: ${data.date}
+      Centre: ${data.centre}
       Test type: ${d.testType}
       Time: ${d.time}
       Price: ${d.price}
