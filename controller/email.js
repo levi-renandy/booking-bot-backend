@@ -22,7 +22,7 @@ const sendEmail = async (req, res) => {
   };
 
   if (data) {
-    for (let d of data) {
+    for (let d of data.data) {
       mailOptions.text += `
       Date: ${d.date}
       Centre: ${d.centre}
