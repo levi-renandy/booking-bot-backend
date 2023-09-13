@@ -7,7 +7,7 @@ const msg = {
   from: "funnylife0004@outlook.com", // Change to your verified sender
   subject: "Sending with SendGrid is Fun",
   text: "and easy to do anywhere, even with Node.js",
-  html: "<strong>and easy to do anywhere, even with Node.js</strong>",
+  //   html: "<strong>and easy to do anywhere, even with Node.js</strong>",
 };
 
 sgMail
@@ -17,5 +17,5 @@ sgMail
     console.log(response[0].body);
   })
   .catch((error) => {
-    console.error(error);
+    console.error(error.response.body);
   });

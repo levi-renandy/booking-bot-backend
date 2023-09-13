@@ -8,9 +8,16 @@ const sendEmail = async (req, res) => {
 
   let users = await admin.find({});
 
+  let to = [];
+  for (let user of users) {
+    to.push(user.email);
+  }
+
+  console.log(to);
+
   let mailOptions = {
     from: "funnylife0004@outlook.com",
-    to: users.map((user) => user.email),
+    to,
     subject: text,
     text: "",
   };
@@ -27,16 +34,19 @@ const sendEmail = async (req, res) => {
       Last date to cancel: ${d.lastDateToCancel}
       `;
     }
+  } else {
+    mailOptions.subject = "Warning!";
+    mailOptions.text = text;
   }
 
   sgMail
-    .send(msg)
+    .send(mailOptions)
     .then((response) => {
       console.log("Email sent");
       res.json({ message: "Success!" });
     })
     .catch((error) => {
-      console.log(error);
+      console.log(error.response.body);
       res.status(500).json({ message: "Failed" });
     });
 };
