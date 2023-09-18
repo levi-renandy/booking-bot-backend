@@ -16,6 +16,6 @@
   "dialogCloseBtn": "button[title='Close']",
   "dateRange": "#searchResults p.centre.bold",
   "gotoPreviousWeek": "searchForWeeklySlotsPreviousWeek",
-  "dialogIframe": "div[role='dialog'] iframe#main-iframe",
+  "dialogIframe": "iframe#main-iframe",
   "errorTitle": ".error-title"
 }
