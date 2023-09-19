@@ -17,5 +17,6 @@
   "dateRange": "#searchResults p.centre.bold",
   "gotoPreviousWeek": "searchForWeeklySlotsPreviousWeek",
   "dialogIframe": "iframe#main-iframe",
-  "errorTitle": ".error-title"
+  "errorTitle": ".error-title",
+  "notBooked": "#daySlots .error"
 }
