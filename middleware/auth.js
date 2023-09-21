@@ -1,5 +1,4 @@
 const device = require("../models/device");
-const bcrypt = require("bcryptjs");
 
 const auth = async (req, res, next) => {
   const id = req.headers.id;
