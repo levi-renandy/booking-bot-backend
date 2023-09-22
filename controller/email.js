@@ -42,11 +42,11 @@ const sendEmail = async (req, res) => {
   sgMail
     .send(mailOptions)
     .then((response) => {
-      console.log("Email sent");
+      console.log("Email sent: ", text);
       res.json({ message: "Success!" });
     })
     .catch((error) => {
-      console.log(error.response.body);
+      console.log(error.response.body, text);
       res.status(500).json({ message: "Failed" });
     });
 };
